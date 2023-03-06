@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 1000
-
 #define RECURSIVE 'r'
 
 //! TO DO: GIT PUSH!!!, and fix syntax, such as unecessary {} on if and loop statements
