@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define RECURSIVE 'r'
-
-//! TO DO: GIT PUSH!!!, and fix syntax, such as unecessary {} on if and loop statements
-
 void printArray(int *arr, int arrLength);
 
 bool recInSequence(int *cache, long lookingFor, int currSeqLen);
@@ -14,29 +10,21 @@ long recamanRecursively(int *cache, int termNum);
 int main(int argc, char *argv[])
 {
 
-    // Preforms input validation
     if ((argc < 2) || (atoi(argv[1]) < 1))
     {
         fprintf(stderr, "Usage: %s <pos num>\n", argv[0]);
-        return 1;
+        exit(-1);
     }
 
-    // Declares sequence length, and creates an array ready to store the sequence
     int seqLen = atoi(argv[1]);
 
     int *cache = malloc((sizeof(int)) * (seqLen));
     for (int idx = 0; idx < seqLen; ++idx)
         cache[idx] = -1;
 
-    // Preforms the loop to create the sequence
     for (int termNum = 0; termNum < seqLen; termNum++)
-    {
-        printf("."); // Temporary loading visuilization
         recamanRecursively(cache, termNum);
-    }
 
-    printf("\n"); // Using for format
-    // Prints the sequence
     printArray(cache, seqLen);
 
     free(cache);
@@ -46,8 +34,9 @@ int main(int argc, char *argv[])
 
 void printArray(int *arr, int arrLength)
 {
+    int term = 1;
     while (arrLength--)
-        printf("%d ", *arr++);
+        printf("Term %d: %d\n", term++, *arr++);
 
     printf("\n");
 }
