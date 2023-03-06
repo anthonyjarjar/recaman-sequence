@@ -2,13 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ITERATIVE 'i'
 #define RECURSIVE 'r'
 
 void printLongArray(long *arr, int arr_length);
-
-bool inSequence(long *arr, int lookingFor);
-long iterativeProcess(int seqLen);
 
 bool recInSequence(long lookingFor, int currSeqLen);
 long recamanRecursively(int term_number);
@@ -16,10 +12,10 @@ long recamanRecursively(int term_number);
 int main(int argc, char *argv[])
 {
 
-    if (argc < 3 || (argv[1][0] != ITERATIVE && argv[1][0] != RECURSIVE) ||
-        atoi(argv[2]) < 1)
+    if ((argc < 3) || (argv[1][0] != RECURSIVE) ||
+        (atoi(argv[2]) < 1))
     {
-        fprintf(stderr, "Usage: %s <i/r> <pos num>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <r> <pos num>\n", argv[0]);
         return 1;
     }
 
@@ -30,16 +26,14 @@ int main(int argc, char *argv[])
 
         for (int termNum = 0; termNum < seqLen; termNum++)
         {
+            printf("."); // Temporary loading visuilization
             recamanSeq[termNum] = recamanRecursively(termNum);
         }
 
+        printf("\n"); // Using for format
         printLongArray(recamanSeq, seqLen);
 
         free(recamanSeq);
-    }
-    else
-    {
-        iterativeProcess(atoi(argv[2]));
     }
 
     return 0;
@@ -52,49 +46,6 @@ void printLongArray(long *arr, int arr_length)
         printf("%ld ", *arr++);
     }
     printf("\n");
-}
-
-bool inSequence(long *arr, int lookingFor)
-{
-    for (int idx = 0; (idx < sizeof(arr)); idx++)
-    {
-        if (lookingFor == arr[idx])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-long iterativeProcess(int seqLen)
-{
-    long *tempArr = malloc(sizeof(long) * seqLen);
-    for (int termNum = 0; termNum <= seqLen; termNum++)
-    {
-        if (termNum == 0)
-        {
-            tempArr[termNum] = 0;
-        }
-        else if (termNum > 0)
-        {
-            int potentialTerm = tempArr[termNum - 1] - termNum;
-            if (((inSequence(tempArr, potentialTerm)) == true) ||
-                (potentialTerm < 0))
-            {
-                potentialTerm = tempArr[termNum - 1] + termNum;
-                tempArr[termNum] = potentialTerm;
-            }
-            else
-            {
-                tempArr[termNum] = potentialTerm;
-            }
-        }
-    }
-
-    printLongArray(tempArr, seqLen);
-    free(tempArr);
-
-    return 0;
 }
 
 bool recInSequence(long lookingFor, int currSeqLen)
