@@ -1,10 +1,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1400
+#define WINDOW_HEIGHT 1000
 #define CACHE_SIZE 100
 
 void printArray(int *arr, int arrLength);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    SDL_Window *win = SDL_CreateWindow("Recaman Sequence Visualization", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window *win = SDL_CreateWindow("Recaman Sequence Visualization", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if (win == NULL)
     {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -162,23 +163,48 @@ void addToCache(int *cache, int value, int *cacheSize)
     }
 }
 
+void drawArc(SDL_Renderer *renderer, int x, int y, int radius, int startAngle, int endAngle)
+{
+    int prevX = x + radius * cos(startAngle * M_PI / 180);
+    int prevY = y + radius * sin(startAngle * M_PI / 180);
+
+    for (int angle = startAngle + 1; angle <= endAngle; angle++)
+    {
+        double rad = angle * M_PI / 180;
+        int nextX = x + radius * cos(rad);
+        int nextY = y + radius * sin(rad);
+        SDL_RenderDrawLine(renderer, prevX, prevY, nextX, nextY);
+        prevX = nextX;
+        prevY = nextY;
+    }
+}
+
 void drawRecaman(SDL_Renderer *renderer, int *sequence, int seqLen)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     int x0 = WINDOW_WIDTH / 2;
     int y0 = WINDOW_HEIGHT / 2;
-    int x1 = x0;
-    int y1 = y0;
-    int radius = 20;
+    int direction = 1;
+    int scale = 5;
 
     for (int i = 1; i < seqLen; i++)
     {
-        int x2 = x0 + (sequence[i] - sequence[i - 1]) * radius;
-        int y2 = y0;
+        int x1 = x0 + (sequence[i] - sequence[i - 1]) * scale * direction;
+        int radius = abs(sequence[i] - sequence[i - 1]) * scale / 2;
+        int centerX = (x0 + x1) / 2;
+        int centerY = y0;
 
-        SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-        x1 = x2;
-        y1 = y2;
+        if (direction > 0)
+        {
+            drawArc(renderer, centerX, centerY, radius, 180, 360);
+        }
+        else
+        {
+            drawArc(renderer, centerX, centerY, radius, 0, 180);
+        }
+
+        direction *= -1;
+        x0 = x1;
     }
 }
